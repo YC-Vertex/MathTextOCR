@@ -61,7 +61,8 @@ class MtocrToolbar(QMainWindow):
         self.btn_rLast.clicked.connect(self.enableRecordLast)
         '''
 
-        self.ldt_hotkey = QLineEdit()
+        self.lbl_hotkey = QLabel('Hotkey: ')
+        self.ldt_hotkey = QLineEdit('s')
 
         self.btn_isOK = QPushButton('OK')
         self.btn_isOK.clicked.connect(self.showPic)
@@ -76,9 +77,10 @@ class MtocrToolbar(QMainWindow):
         self.lyt_selection.addWidget(self.ldt_hotkey, 0, 5)
         self.lyt_selection.addWidget(self.btn_isOK, 0, 6)
         '''
-        self.lyt_selection.addWidget(self.btn_file, 0, 0)
+        self.lyt_selection.addWidget(self.lbl_hotkey, 0, 0)
         self.lyt_selection.addWidget(self.ldt_hotkey, 0, 1)
-        self.lyt_selection.addWidget(self.btn_isOK, 0, 2)
+        self.lyt_selection.addWidget(self.btn_file, 1, 0)
+        self.lyt_selection.addWidget(self.btn_isOK, 1, 1)
 
         self.wgt_selection = QWidget()
         self.wgt_selection.setLayout(self.lyt_selection)
@@ -217,12 +219,14 @@ class MtocrPicture(QMainWindow):
 
     def DoMathpixOcr(self):
         for region in self.selectedRegion:
+            '''
             ag.hotkey('ctrl', 'alt', 'm')
             ag.moveTo(region[0], region[1], DT[0])
             ag.mouseDown(region[0], region[1])
             ag.moveRel(region[2], region[3], DT[1])
             ag.mouseUp()
             time.sleep(DT[2])
+            '''
 
             clb = QApplication.clipboard()
             print(clb.text())
@@ -240,7 +244,7 @@ class MtocrPicture(QMainWindow):
             self.img[row_top+h:row_btm+h, col_rgt:] = self.img[row_top:row_btm, col_rgt:]
             self.img[row_top:row_btm, col_lft:] = white_2
 
-            cv.putText(self.img, clb.text(), (20, row_btm + 40), cv.FONT_HERSHEY_TRIPLEX, 0.7, (0, 0, 0), 1, 4)
+            cv.putText(self.img, clb.text(), (20, row_btm + 40), cv.FONT_HERSHEY_TRIPLEX, 0.6, (0, 0, 0), 1, 4)
 
         cv.imwrite(oImg_file_path, self.img)
 
@@ -251,6 +255,7 @@ class MtocrPicture(QMainWindow):
             fout.write(item['words'])
             fout.write('\n')
         fout.close()
+        print(f'Done. Saved to file {oTxt_file_path}.')
 
     def mousePressEvent(self, event):
         if self.inputFlag and event.button() == Qt.LeftButton:
